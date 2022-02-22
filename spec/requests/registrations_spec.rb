@@ -36,6 +36,43 @@ RSpec.describe 'POST /signup', type: :request do
     end
   end
 
+  context 'with correct survey params' do
+    let(:survey_params) do
+      params[:user].store(:stressed_about_billing, 'True')
+      params[:user].store(:too_much_time, 'Mostly True')
+      params[:user].store(:accept_more_subsidy_families, 'False')
+      params[:user].store(:not_as_much_money, 'Mostly False')
+      params
+    end
+
+    before do
+      post '/signup', params: survey_params
+    end
+
+    it 'signs up a new user; creates the user, returns 201' do
+      expect(response).to have_http_status(:created)
+      expect(response).to match_response_schema('user')
+      expect(JSON.parse(response.body)['state']).to eq('NE')
+      expect(JSON.parse(response.body).keys).to contain_exactly('id', 'greeting_name', 'language', 'state')
+    end
+  end
+
+  context 'with incorrect survey params' do
+    let(:bad_survey_params) do
+      params[:user].store(:stressed_about_billing, 'Bonk')
+      params
+    end
+
+    before do
+      post '/signup', params: bad_survey_params
+    end
+
+    it 'returns unprocessable entity' do
+      expect(response.status).to eq 422
+      expect(JSON.parse(response.body)['detail']['stressed_about_billing'].first).to eq('is not included in the list')
+    end
+  end
+
   context 'when signup params are incorrect' do
     let(:bad_params) { { user: { title: 'whatever ' } } }
 

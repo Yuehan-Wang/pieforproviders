@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_18_191415) do
+ActiveRecord::Schema.define(version: 2022_02_22_001703) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -279,6 +279,10 @@ ActiveRecord::Schema.define(version: 2022_02_18_191415) do
     t.datetime "updated_at", precision: 6, null: false
     t.date "deleted_at"
     t.string "state", limit: 2
+    t.text "stressed_about_billing"
+    t.text "not_as_much_money"
+    t.text "too_much_time"
+    t.text "accept_more_subsidy_families"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["phone_number"], name: "index_users_on_phone_number", unique: true

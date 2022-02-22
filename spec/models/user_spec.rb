@@ -24,6 +24,20 @@ RSpec.describe User, type: :model do
     expect(build(:admin)).to be_valid
   end
 
+  it 'validates that survey questions are a permitted value only' do
+    user.save!
+
+    user.accept_more_subsidy_families = 'True'
+    user.valid?
+    expect(user.errors.messages).to eq({})
+    expect(user).to be_valid
+
+    user.accept_more_subsidy_families = 'not a valid answer'
+    user.valid?
+    expect(user.errors.messages.keys).to eq([:accept_more_subsidy_families])
+    expect(user.errors.messages[:accept_more_subsidy_families]).to include('is not included in the list')
+  end
+
   it 'formats a phone number with non-digit characters' do
     expect(user.phone_number).to eq('8888888888')
   end
@@ -102,6 +116,7 @@ end
 # Table name: users
 #
 #  id                           :uuid             not null, primary key
+#  accept_more_subsidy_families :text
 #  active                       :boolean          default(TRUE), not null
 #  admin                        :boolean          default(FALSE), not null
 #  confirmation_sent_at         :datetime
@@ -117,6 +132,7 @@ end
 #  language                     :string           not null
 #  last_sign_in_at              :datetime
 #  last_sign_in_ip              :inet
+#  not_as_much_money            :text
 #  opt_in_email                 :boolean          default(TRUE), not null
 #  opt_in_text                  :boolean          default(TRUE), not null
 #  organization                 :string           not null
@@ -128,8 +144,10 @@ end
 #  service_agreement_accepted   :boolean          default(FALSE), not null
 #  sign_in_count                :integer          default(0), not null
 #  state                        :string(2)
+#  stressed_about_billing       :text
 #  timezone                     :string           not null
 #  too_much_time                :text
+#  unconfirmed_email            :string
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
 #
